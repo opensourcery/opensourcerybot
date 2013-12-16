@@ -2,14 +2,16 @@ var irc = require('irc')
   , parse = require('esprima').parse
   , evaluate = require('static-eval')
 
-var client = new irc.Client('irc.freenode.net', 'opensourcerybot', {
+var name = 'opensourcerybot'
+
+var client = new irc.Client('irc.freenode.net', name, {
   channels: ['#opensourcerypdx']
 })
 
 client.addListener('message', function(from, to, message) {
   console.log(from + ' said ' + message + ' to ' + to)
 
-  if (from === 'adamdicarlo' && to === 'opensourcerybot') {
+  if (from === 'thrn' && to === name) {
     saySomething(message)
     return
   }
@@ -45,18 +47,32 @@ client.addListener('message', function(from, to, message) {
           saySomething(getNugget())
         }
         else {
-          result = /^!eval\s+(.+)$/.exec(message)
+          result = /^!comeback\s+(.+)$/.exec(message)
           if (result) {
-            try {
-              var ast = parse(result[1]).body[0].expression;
-              saySomething(evaluate(ast))
-            }
-            catch (e) {
-              saySomething('Sigh... Exception: ' + e.toString())
-            }
+            addComeback(result[1])
+            client.say(to, 'Got it. Thanks for the comeback, ' + from + '.')
           }
-          else if (randInt(0, 32) === 7) {
-            saySomething(getComeback())
+          else {
+            result = /^!eval\s+(.+)$/.exec(message)
+            if (result) {
+              try {
+                var ast = parse(result[1]).body[0].expression;
+                saySomething(evaluate(ast))
+              }
+              catch (e) {
+                saySomething('Sigh... Exception: ' + e.toString())
+              }
+            }
+            else {
+              result = new RegExp(name)
+              result = result.exec(message)
+              if (result) {
+                saySomething(getComeback())
+              }
+              else if (randInt(0, 32) === 7) {
+                saySomething(getComeback())
+              }
+            }
           }
         }
       }
@@ -68,7 +84,12 @@ function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1))
 }
 
-var comebacks = [
+function shuffle(o){
+    for(var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x)
+    return o
+}
+
+var comebacks = shuffle([
   "Why don't we ever talk about MY problems?",
   "Are you sure?",
   "Are you sure? Like, really, really sure?",
@@ -81,11 +102,15 @@ var comebacks = [
   "I'm a little irc-bot short and stout",
   "opensourcerybot is my handle, and I have no spout.",
   "A great man once said a really inspiring thing. Something about... like, life, or something.",
-], nextComeback = 0
+]), nextComeback = 0
 function getComeback() {
   var comeback = comebacks[nextComeback]
   nextComeback = (nextComeback + 1) % comebacks.length
   return comeback
+}
+
+function addComeback(comeback) {
+  comebacks.push(comeback)
 }
 
 var nuggets = [
