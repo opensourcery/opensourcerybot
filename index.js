@@ -1,4 +1,6 @@
 var irc = require('irc')
+  , parse = require('esprima').parse
+  , evaluate = require('static-eval')
 
 var client = new irc.Client('irc.freenode.net', 'opensourcerybot', {
   channels: ['#opensourcerypdx']
@@ -46,7 +48,8 @@ client.addListener('message', function(from, to, message) {
           result = /^!eval\s+(.+)$/.exec(message)
           if (result) {
             try {
-              saySomething(eval(result[1]))
+              var ast = parse(result[1]).body[0].expression;
+              saySomething(evaluate(ast))
             }
             catch (e) {
               saySomething('Sigh... Exception: ' + e.toString())
