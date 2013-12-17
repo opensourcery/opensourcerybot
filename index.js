@@ -64,13 +64,19 @@ client.addListener('message', function(from, to, message) {
               }
             }
             else {
-              result = new RegExp(name)
-              result = result.exec(message)
+              result = /snow/.exec(message)
               if (result) {
-                saySomething(getComeback())
+                saySomething('Snow? Did someone say snow?')
               }
-              else if (randInt(0, 32) === 7) {
-                saySomething(getComeback())
+              else {
+                result = new RegExp(name)
+                result = result.exec(message)
+                if (result) {
+                  saySomething(getComeback())
+                }
+                else if (randInt(0, 32) === 7) {
+                  saySomething(getComeback())
+                }
               }
             }
           }
