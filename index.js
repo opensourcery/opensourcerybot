@@ -42,6 +42,7 @@ var builtins = [
         var result = /^!reload$/.exec(args.message)
         if (result) {
           functions.loadPlugins()
+          args.client.say(args.from, 'Reloaded definition files.')
           return true
         }
       }
