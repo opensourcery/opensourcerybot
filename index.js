@@ -1,5 +1,6 @@
 var irc = require('irc')
   , fs = require('fs')
+  , path = require('path')
   , parse = require('esprima').parse
   , evaluate = require('static-eval')
 
@@ -9,6 +10,8 @@ var functions = {
   loadPlugins: function () {
     plugins = []
     fs.readdirSync('./lib/plugins').forEach(function (name) {
+      var filename = path.resolve('./lib/plugins/' + name);
+      delete require.cache[filename];
       var plugin = require('./lib/plugins/' + name)
       plugins.push(plugin)
     })
