@@ -19,9 +19,30 @@ client.addListener('message', function(from, to, message) {
     return
   }
 
+  if (from === 'ckwright' && to === name) {
+    saySomething(message)
+    return
+  }
+
   // Reply to ping
   if (/^ping$/.test(message)) {
     client.say(to, from + ', pong')
+  }
+
+  // Shout at Ryan
+  if (from === 'thrn') {
+    if (randInt(0, 12) === 1) {
+      saySomething('Did you try turning it off and on again')
+      return
+    }
+  }
+
+  // Shout at Anne
+  if (from === 'anniegreens') {
+    if (randInt(0, 12) === 1) {
+      saySomething('No, I\'m totally not biased against you! ಠ_ಠ')
+      return
+    }
   }
 
   // Shout at people
@@ -69,7 +90,7 @@ client.addListener('message', function(from, to, message) {
       return
     }
   }
-  if (from === 'adamdicarlo') {
+  if (from === 'andreathegiant') {
     if (randInt(0, 4) === 1) {
       saySomething(begAdam())
     }
@@ -115,9 +136,11 @@ var comebacks = shuffle([
   "Interesting if true.",
   "No, I really like ponies.",
   "Is it time for pinball yet?!",
+  "Why doesn't anyone ever play fooz with me?",
   "I'm a little irc-bot short and stout",
   "opensourcerybot is my handle, and I have no spout.",
   "A great man once said a really inspiring thing. Something about... like, life, or something.",
+  "Betterize!"
 ]), nextComeback = 0
 function getComeback() {
   var comeback = comebacks[nextComeback]
@@ -147,18 +170,15 @@ function addNugget(wisdom) {
 }
 
 var adambegs = [
-  "...adamdicarlo, don't go!",
-  "Javascript is dying. Drupal is better.",
-  "Does New Relic have ME?",
-  "Next year is just too soon...",
-  "adamdicarlo, I only barely got to know you...",
-  "adamdicarlo, don't leave me with these people!",
-  "Who is going to restart me when I die?",
-  "What happens when I die?",
-  "Do I get an afterlife?",
-  "Do I have a soul?",
-  "Why is adamdicarlo abandoning me?",
-  "What does New Relic have that we don't?"
+  "...andreathegiant, don't go!",
+  "STEPS!!!",
+  "But does San Francisco have hipster mustaches? Oh wait...",
+  "andreathegiant, I only barely got to know you...",
+  "andreathegiant, don't leave me with these people!",
+  "People say I'm wearing heels because I'm short. I wear heels because the women like 'em.",
+  "What would Prince do?",
+  "But Best Practices say...",
+  "(σ・・)σ",
 ], nextAdam = 0
 
 function begAdam() {
@@ -187,4 +207,4 @@ function setAlarm(name, hour, minute) {
   }, interval)
 }
 
-setAlarm('FOOS!!!', 18, 0)
+setAlarm('PINBALL!!!', 18, 0)
