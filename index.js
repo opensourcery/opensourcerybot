@@ -108,7 +108,7 @@ client.addListener('message', function(from, to, message) {
   }
   // Invent a sequel
   result = find_sequel(message)
-  if (result) {
+  if (result && randInt(0,4) === 2) {
     saySomething(result)
     return
   }
