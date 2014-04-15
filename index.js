@@ -1,16 +1,12 @@
 var irc = require('irc')
   , parse = require('esprima').parse
   , evaluate = require('static-eval')
+  , find_sequel = require('dieharderer')
 
-var name = 'richardholder'
+var name = 'opensourcerybot'
 
 var client = new irc.Client('irc.freenode.net', name, {
-  channels: ['#opensourcerypdx'],
-  userName: name,
-  nick: name,
-  password: 'dunce.clerk.toys',
-  sasl: true,
-  realName: 'Harry Richard Holder, OpenSourcery IRC Bot'
+  channels: ['#opensourcerypdx']
 })
 client.addListener('error', function(message) {
   console.log('error: ', message )
@@ -126,7 +122,7 @@ client.addListener('message', function(from, to, message) {
 
   // Invent a sequel
   result = find_sequel(message)
-  if (result) {
+  if (result && randInt(0,4) === 2) {
     saySomething(result)
   }
 
