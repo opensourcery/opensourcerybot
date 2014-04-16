@@ -328,7 +328,8 @@ var nuggets = [
   "The name of your first pet and the street you grew up on = Porn Star name. Discuss amongst yourselves.",
   "Life ... ... ... ... ... uh, life finds a way.",
   "You can't be powdery and milky.",
-  "Shot through the heart! And (open)SSL's to blame! You give secure, a bad name!"
+  "Shot through the heart! And (open)SSL's to blame! You give secure, a bad name!",
+  'There ends in "er".'
 ], nextNugget = 0
 shuffle(nuggets)
 
