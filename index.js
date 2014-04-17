@@ -80,7 +80,7 @@ var builtins = [
           if (!helpfunction) {
             plugins.forEach(function (plugin) {
               if (plugin.name === result[1] && plugin.hasOwnProperty('help')) {
-                helpfunction = plugins.help()
+                helpfunction = plugin.help()
               }
             })
           }
