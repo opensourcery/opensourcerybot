@@ -41,13 +41,11 @@ var builtins = [
       }
     },
     run: function (args) {
-      if (args.to == args.config.handle) {
-        var result = /^!reload$/.exec(args.message)
-        if (result) {
-          functions.loadPlugins()
-          args.client.say(args.from, 'Reloaded definition files.')
-          return true
-        }
+      var result = /^!reload$/.exec(args.message)
+      if (result) {
+        functions.loadPlugins()
+        args.client.say(args.to, 'Reloaded definition files.')
+        return true
       }
       return false
     }
