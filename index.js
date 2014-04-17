@@ -60,12 +60,22 @@ var builtins = [
     },
     run: function (args) {
       var allbuiltinnames = builtins.map(function(elem) {
-        return elem.name
+        if (elem.hasOwnProperty('help')) {
+          return elem.name
+        }
+        else {
+          return false
+        }
       }).join(", ")
         , allpluginnames = plugins.map(function(elem) {
-        return elem.name
+        if (elem.hasOwnProperty('help')) {
+          return elem.name
+        }
+        else {
+          return false
+        }
       }).join(", ")
-      
+
       var helpfunction
       var result = /^!help\s?(\S*)?$/.exec(args.message)
       if (result) {
