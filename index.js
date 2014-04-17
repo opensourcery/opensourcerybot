@@ -6,6 +6,10 @@ var irc = require('irc')
 
 var config = require('./config')
 
+var client = new irc.Client(config.network, config.handle, {
+  channels: config.channels
+})
+
 var functions = {
   loadPlugins: function () {
     plugins = []
@@ -26,10 +30,6 @@ var functions = {
     })
   }
 }
-
-var client = new irc.Client(config.network, config.handle, {
-  channels: config.channels
-})
 
 var builtins = [
   {
@@ -69,7 +69,7 @@ client.addListener('error', function(message) {
 client.addListener('message', function(from, to, message) {
   console.log(from + ' said ' + message + ' to ' + to)
 
- builtins.forEach(function (command) {
+  builtins.forEach(function (command) {
     if (functions.checkCommand(command, {
       to: to,
       from: from,
