@@ -54,8 +54,52 @@ var builtins = [
   },
   {
     name: 'help',
-    help: function () {},
-    run: function () { return false }
+    help: function () {
+      return {
+        usage: '!help [command]',
+        description: 'Gives more information about a command, or lists all commands.'
+      }
+    },
+    run: function (args) {
+      var allbuiltinnames = builtins.map(function(elem) {
+        return elem.name
+      }).join(", ")
+        , allpluginnames = plugins.map(function(elem) {
+        return elem.name
+      }).join(", ")
+      
+      var helpfunction
+      var result = /^!help\s?(\S*)?$/.exec(args.message)
+      if (result) {
+        if (result[1]) {
+          builtins.forEach(function (builtin) {
+            if (builtin.name === result[1] && builtin.hasOwnProperty('help')) {
+              helpfunction = builtin.help()
+            }
+          })
+          if (!helpfunction) {
+            plugins.forEach(function (plugin) {
+              if (plugin.name === result[1] && plugin.hasOwnProperty('help')) {
+                helpfunction = plugins.help()
+              }
+            })
+          }
+          if (helpfunction) {
+            args.client.say(args.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
+            return true
+          }
+          else {
+            args.client.say(args.to, 'Sorry, function not found or has no help info.')
+            return true
+          }
+        }
+        else {
+          args.client.say(args.to, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
+          return true
+        }
+      }
+      return false
+    }
   }
 ]
 
