@@ -2,7 +2,7 @@ var config = {}
 
 config.handle = 'osbot'
 
-config.network = 'gargravarr'
+config.network = 'gargravarr.opensourcery.com'
 
 config.channels = ['#bottest']
 
