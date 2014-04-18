@@ -1,8 +1,6 @@
 var irc = require('irc')
   , fs = require('fs')
   , path = require('path')
-  , parse = require('esprima').parse
-  , evaluate = require('static-eval')
 
 var config = require('./config')
 
@@ -10,7 +8,7 @@ var client = new irc.Client(config.network, config.handle, {
   channels: config.channels
 })
 
-client.config = config
+client.config = config // We put the config inside the client for easy grabbing should it come up in a plugin
 
 var functions = {
   loadPlugins: function () {
@@ -19,7 +17,13 @@ var functions = {
       var filename = path.resolve('./lib/plugins/' + name)
       delete require.cache[filename]
       var plugin = require('./lib/plugins/' + name)
+      if (!plugin.weight) {
+        plugin.weight = 0
+      }
       plugins.push(plugin)
+    })
+    plugins.sort(function(a, b) {
+      return a.weight - b.weight
     })
   },
   checkCommand: function (command, from, to, content) {
