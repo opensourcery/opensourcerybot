@@ -14,8 +14,8 @@ var functions = {
   loadPlugins: function () {
     plugins = []
     fs.readdirSync('./lib/plugins').forEach(function (name) {
-      var filename = path.resolve('./lib/plugins/' + name);
-      delete require.cache[filename];
+      var filename = path.resolve('./lib/plugins/' + name)
+      delete require.cache[filename]
       var plugin = require('./lib/plugins/' + name)
       plugins.push(plugin)
     })
@@ -115,18 +115,27 @@ var plugins = []
 functions.loadPlugins()
 
 client.addListener('error', function(message) {
-        console.log('error: ', message);
-});
+  console.log('error: ', message)
+})
 
 client.addListener('message', function(from, to, message) {
   console.log(from + ' said ' + message + ' to ' + to)
 
   builtins.forEach(function (command) {
-    if (functions.checkCommand(command, {
+    var args = {
       to: to,
       from: from,
       message: message
-    })) {
+    }
+    if (command.requires) {
+      args.requires = {}
+      command.requires.forEach(function (required) {
+        if (required.name && required.file) {
+          args.requires[required.name] = require(required.file)
+        }
+      })
+    }
+    if (functions.checkCommand(command, args)) {
       return
     }
   })
