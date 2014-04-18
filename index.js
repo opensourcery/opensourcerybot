@@ -20,23 +20,21 @@ var functions = {
       plugins.push(plugin)
     })
   },
-  checkCommand: function (command, args) {
-    args.requires = {}
+  checkCommand: function (command, from, to, message) {
+    var requires = {}
+    var data = {
+      to: to,
+      from: from,
+      message: message
+    }
     if (command.requires) {
       command.requires.forEach(function (required) {
         if (required.name && required.file) {
-          args.requires[required.name] = require(required.file)
+          requires[required.name] = require(required.file)
         }
       })
     }
-    return command.run({
-      client: client,
-      to: args.to,
-      from: args.from,
-      message: args.message,
-      config: config,
-      requires: args.requires
-    })
+    return command.run(client, data, config, requires)
   },
   updateFile: function (file, data) {
     var string = JSON.stringify(data)
@@ -57,11 +55,11 @@ var builtins = [
         description: 'Reloads all definition files'
       }
     },
-    run: function (args) {
-      var result = /^!reload$/.exec(args.message)
+    run: function (client, data) {
+      var result = /^!reload$/.exec(data.message)
       if (result) {
         functions.loadPlugins()
-        args.client.say(args.to, 'Reloaded definition files.')
+        client.say(data.to, 'Reloaded definition files.')
         return {status:"success"}
       }
       return {status:"fail"}
@@ -75,7 +73,7 @@ var builtins = [
         description: 'Gives more information about a command, or lists all commands.'
       }
     },
-    run: function (args) {
+    run: function (client, data) {
       var allbuiltinnames = builtins.map(function(elem) {
         if (elem.hasOwnProperty('help')) {
           return elem.name
@@ -94,7 +92,7 @@ var builtins = [
       }).join(", ")
 
       var helpfunction
-      var result = /^!help\s?(\S*)?$/.exec(args.message)
+      var result = /^!help\s?(\S*)?$/.exec(data.message)
       if (result) {
         if (result[1]) {
           builtins.forEach(function (builtin) {
@@ -110,14 +108,14 @@ var builtins = [
             })
           }
           if (helpfunction) {
-            args.client.say(args.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
+            client.say(data.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
           }
           else {
-            args.client.say(args.to, 'Sorry, function not found or has no help info.')
+            client.say(data.to, 'Sorry, function not found or has no help info.')
           }
         }
         else {
-          args.client.say(args.to, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
+          client.say(data.to, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
         }
         return {status:"success"}
       }
@@ -137,24 +135,14 @@ client.addListener('message', function(from, to, message) {
   console.log(from + ' said ' + message + ' to ' + to)
 
   builtins.forEach(function (command) {
-    var args = {
-      to: to,
-      from: from,
-      message: message
-    }
-    if (functions.checkCommand(command, args).status === 'success') {
+    if (functions.checkCommand(command, from, to, message).status === 'success') {
       return
     }
   })
 
   plugins.forEach(function (command) {
-    var args = {
-      to: to,
-      from: from,
-      message: message
-    }
-    var result = functions.checkCommand(command, args)
-    
+    var result = functions.checkCommand(command, from, to, message)
+
     switch (result.status) {
       case 'fail':
         break
