@@ -54,9 +54,9 @@ var builtins = [
       if (result) {
         functions.loadPlugins()
         args.client.say(args.to, 'Reloaded definition files.')
-        return true
+        return {status:"success"}
       }
-      return false
+      return {status:"fail"}
     }
   },
   {
@@ -103,19 +103,17 @@ var builtins = [
           }
           if (helpfunction) {
             args.client.say(args.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
-            return true
           }
           else {
             args.client.say(args.to, 'Sorry, function not found or has no help info.')
-            return true
           }
         }
         else {
           args.client.say(args.to, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
-          return true
         }
+        return {status:"success"}
       }
-      return false
+      return {status:"fail"}
     }
   }
 ]
@@ -147,8 +145,17 @@ client.addListener('message', function(from, to, message) {
       from: from,
       message: message
     }
-    if (functions.checkCommand(command, args)) {
-      return
+    var result = functions.checkCommand(command, args)
+    
+    switch (result.status) {
+      case 'fail':
+        break
+      case 'update':
+        if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
+          functions.updateFile(result.file, result.data)
+        }
+      case 'success':
+        return
     }
   })
 
