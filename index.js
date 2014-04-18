@@ -37,6 +37,14 @@ var functions = {
       config: config,
       requires: args.requires
     })
+  },
+  updateFile: function (file, data) {
+    var string = JSON.stringify(data)
+    fs.writeFile(file, string, function(e) {
+      if (e) {
+        console.log(e)
+      }
+    })
   }
 }
 
@@ -153,6 +161,7 @@ client.addListener('message', function(from, to, message) {
       case 'update':
         if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
           functions.updateFile(result.file, result.data)
+          client.say(to, result.file + ' updated!')
         }
       case 'success':
         return
