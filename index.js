@@ -55,12 +55,12 @@ var functions = {
 var builtins = [
   {
     name: 'reload',
-    help: function () {
-      return {
+    help: [
+      {
         usage: '!reload',
         description: 'Reloads all definition files'
       }
-    },
+    ],
     run: function (client, data) {
       var result = /^!reload$/.exec(data.message)
       if (result) {
@@ -73,12 +73,16 @@ var builtins = [
   },
   {
     name: 'help',
-    help: function () {
-      return {
+    help: [
+      {
+        usage: '!help',
+        description: 'Lists all possible commands.'
+      },
+      {
         usage: '!help [command]',
-        description: 'Gives more information about a command, or lists all commands.'
+        description: 'Gives more information about a command or command family.'
       }
-    },
+    ],
     run: function (client, message) {
       var allbuiltinnames = builtins.map(function(elem) {
         if (elem.hasOwnProperty('help')) {
@@ -97,24 +101,29 @@ var builtins = [
         }
       }).join(", ")
 
-      var helpfunction
+      var helpfunctions
+      var command
       var result = /^!help\s?(\S*)?$/.exec(message.content)
+      
       if (result) {
         if (result[1]) {
+          command = result[1]
           builtins.forEach(function (builtin) {
-            if (builtin.name === result[1] && builtin.hasOwnProperty('help')) {
-              helpfunction = builtin.help()
+            if (builtin.name === command && builtin.hasOwnProperty('help')) {
+              helpfunctions = builtin.help
             }
           })
-          if (!helpfunction) {
+          if (!helpfunctions) {
             plugins.forEach(function (plugin) {
-              if (plugin.name === result[1] && plugin.hasOwnProperty('help')) {
-                helpfunction = plugin.help()
+              if (plugin.name === command && plugin.hasOwnProperty('help')) {
+                helpfunctions = plugin.help
               }
             })
           }
-          if (helpfunction) {
-            client.say(message.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
+          if (helpfunctions) {
+            helpfunctions.forEach(function (helpfunction) {
+              client.say(message.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
+            })
           }
           else {
             client.say(message.to, 'Sorry, function not found or has no help info.')
