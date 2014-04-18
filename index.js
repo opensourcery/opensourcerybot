@@ -10,6 +10,8 @@ var client = new irc.Client(config.network, config.handle, {
   channels: config.channels
 })
 
+client.config = config
+
 var functions = {
   loadPlugins: function () {
     plugins = []
@@ -20,12 +22,12 @@ var functions = {
       plugins.push(plugin)
     })
   },
-  checkCommand: function (command, from, to, message) {
+  checkCommand: function (command, from, to, content) {
     var requires = {}
-    var data = {
+    var message = {
       to: to,
       from: from,
-      message: message
+      content: content
     }
     if (command.requires) {
       command.requires.forEach(function (required) {
@@ -34,7 +36,7 @@ var functions = {
         }
       })
     }
-    return command.run(client, data, config, requires)
+    return command.run(client, message, requires)
   },
   updateFile: function (file, data) {
     var string = JSON.stringify(data)
