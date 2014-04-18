@@ -61,11 +61,11 @@ var builtins = [
         description: 'Reloads all definition files'
       }
     ],
-    run: function (client, data) {
-      var result = /^!reload$/.exec(data.message)
+    run: function (client, message) {
+      var result = /^!reload$/.exec(message.content)
       if (result) {
         functions.loadPlugins()
-        client.say(data.to, 'Reloaded definition files.')
+        client.say(message.to, 'Reloaded definition files.')
         return {status:"success"}
       }
       return {status:"fail"}
@@ -104,7 +104,7 @@ var builtins = [
       var helpfunctions
       var command
       var result = /^!help\s?(\S*)?$/.exec(message.content)
-      
+
       if (result) {
         if (result[1]) {
           command = result[1]
