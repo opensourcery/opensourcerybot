@@ -104,6 +104,13 @@ var builtins = [
       var result = /^!help\s?(\S*)?$/.exec(message.content)
 
       if (result) {
+        var postTo
+        if (message.to === client.config.handle) {
+          postTo = message.from
+        }
+        else {
+          postTo = message.to
+        }
         if (result[1]) {
           command = result[1]
           builtins.forEach(function (builtin) {
@@ -120,15 +127,15 @@ var builtins = [
           }
           if (helpfunctions) {
             helpfunctions.forEach(function (helpfunction) {
-              client.say(message.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
+              client.say(postTo, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
             })
           }
           else {
-            client.say(message.to, 'Sorry, function not found or has no help info.')
+            client.say(postTo, 'Sorry, function not found or has no help info.')
           }
         }
         else {
-          client.say(message.to, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
+          client.say(postTo, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
         }
         return {status:"success"}
       }
