@@ -329,7 +329,11 @@ var nuggets = [
   "Life ... ... ... ... ... uh, life finds a way.",
   "You can't be powdery and milky.",
   "Shot through the heart! And (open)SSL's to blame! You give secure, a bad name!",
-  'There ends in "er".'
+  'There ends in "er".',
+  "I have determined that there is a need for a new web development framework modeled after yours truly. We shall call it, Gollum...",
+  "Jitterbug.",
+  "So... Just what the hell is Turnip anyway?",
+  "Captain Planet never comes out of nowhere. He must be summoned."
 ], nextNugget = 0
 shuffle(nuggets)
 
