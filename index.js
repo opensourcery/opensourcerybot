@@ -75,7 +75,7 @@ var builtins = [
         description: 'Gives more information about a command, or lists all commands.'
       }
     },
-    run: function (client, data) {
+    run: function (client, message) {
       var allbuiltinnames = builtins.map(function(elem) {
         if (elem.hasOwnProperty('help')) {
           return elem.name
@@ -94,7 +94,7 @@ var builtins = [
       }).join(", ")
 
       var helpfunction
-      var result = /^!help\s?(\S*)?$/.exec(data.message)
+      var result = /^!help\s?(\S*)?$/.exec(message.content)
       if (result) {
         if (result[1]) {
           builtins.forEach(function (builtin) {
@@ -110,14 +110,14 @@ var builtins = [
             })
           }
           if (helpfunction) {
-            client.say(data.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
+            client.say(message.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
           }
           else {
-            client.say(data.to, 'Sorry, function not found or has no help info.')
+            client.say(message.to, 'Sorry, function not found or has no help info.')
           }
         }
         else {
-          client.say(data.to, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
+          client.say(message.to, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
         }
         return {status:"success"}
       }
@@ -129,21 +129,21 @@ var builtins = [
 var plugins = []
 functions.loadPlugins()
 
-client.addListener('error', function(message) {
-  console.log('error: ', message)
+client.addListener('error', function(content) {
+  console.log('error: ', content)
 })
 
-client.addListener('message', function(from, to, message) {
-  console.log(from + ' said ' + message + ' to ' + to)
+client.addListener('message', function(from, to, content) {
+  console.log(from + ' said ' + content + ' to ' + to)
 
   builtins.forEach(function (command) {
-    if (functions.checkCommand(command, from, to, message).status === 'success') {
+    if (functions.checkCommand(command, from, to, content).status === 'success') {
       return
     }
   })
 
   plugins.forEach(function (command) {
-    var result = functions.checkCommand(command, from, to, message)
+    var result = functions.checkCommand(command, from, to, content)
 
     switch (result.status) {
       case 'fail':
