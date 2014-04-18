@@ -142,7 +142,7 @@ client.addListener('message', function(from, to, message) {
       from: from,
       message: message
     }
-    if (functions.checkCommand(command, args)) {
+    if (functions.checkCommand(command, args).status === 'success') {
       return
     }
   })
