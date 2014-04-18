@@ -21,12 +21,21 @@ var functions = {
     })
   },
   checkCommand: function (command, args) {
+    args.requires = {}
+    if (command.requires) {
+      command.requires.forEach(function (required) {
+        if (required.name && required.file) {
+          args.requires[required.name] = require(required.file)
+        }
+      })
+    }
     return command.run({
       client: client,
       to: args.to,
       from: args.from,
       message: args.message,
-      config: config
+      config: config,
+      requires: args.requires
     })
   }
 }
@@ -127,25 +136,18 @@ client.addListener('message', function(from, to, message) {
       from: from,
       message: message
     }
-    if (command.requires) {
-      args.requires = {}
-      command.requires.forEach(function (required) {
-        if (required.name && required.file) {
-          args.requires[required.name] = require(required.file)
-        }
-      })
-    }
     if (functions.checkCommand(command, args)) {
       return
     }
   })
 
   plugins.forEach(function (command) {
-    if (functions.checkCommand(command, {
+    var args = {
       to: to,
       from: from,
       message: message
-    })) {
+    }
+    if (functions.checkCommand(command, args)) {
       return
     }
   })
