@@ -162,7 +162,7 @@ client.addListener('message', function(from, to, content) {
       case 'update':
         if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
           functions.updateFile(result.file, result.data)
-          client.say(to, result.file + ' updated!')
+          console.log(result.file + ' updated.')
         }
       case 'success':
         return
