@@ -11,8 +11,8 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "irc": "~0.3.6",
     "colors": "~0.6.2",
+    "irc": "~0.3.6",
     "level": "~0.18.0",
     "static-eval": "~0.1.0",
     "esprima": "~1.0.4",
