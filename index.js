@@ -76,11 +76,11 @@ var builtins = [
     help: [
       {
         usage: '!help',
-        description: 'Lists all possible commands.'
+        description: 'Lists all possible help topics.'
       },
       {
         usage: '!help [command]',
-        description: 'Gives more information about a command or command family.'
+        description: 'Gives more information about a specific help topic.'
       }
     ],
     run: function (client, message) {
@@ -131,7 +131,7 @@ var builtins = [
           }
         }
         else {
-          client.say(message.to, 'Possible commands: ' + allbuiltinnames + ', ' + allpluginnames)
+          client.say(message.to, 'Possible help topics: ' + allbuiltinnames + ', ' + allpluginnames)
         }
         return {status:"success"}
       }
