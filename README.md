@@ -17,4 +17,4 @@ This will list all possible help topics.
 !help [topic]
 ```
 
-where [topic] is one of the topics listed in the previous will give more detailed information, including commands that topic may govern.
+where `[topic]` is one of the topics listed in the previous will give more detailed information, including commands that topic may govern.
