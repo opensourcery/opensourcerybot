@@ -88,9 +88,8 @@ var builtins = [
         if (elem.hasOwnProperty('help')) {
           return elem.name
         }
-        else {
-          return false
-        }
+      }).filter(function(value) {
+        return value !== false
       }).join(", ")
         , allpluginnames = plugins.map(function(elem) {
         if (elem.hasOwnProperty('help')) {
@@ -99,6 +98,8 @@ var builtins = [
         else {
           return false
         }
+      }).filter(function(value) {
+        return value !== false
       }).join(", ")
 
       var helpfunctions
