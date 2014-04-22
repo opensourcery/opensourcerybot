@@ -147,30 +147,34 @@ client.addListener('error', function(content) {
 })
 
 client.addListener('message', function(from, to, content) {
+  var builtin_found = false
+    , plugin_found = false
   console.log(from + ' said ' + content + ' to ' + to)
 
-  builtins.some(function (command) {
+  builtin_found = builtins.some(function (command) {
     if (functions.checkCommand(command, from, to, content).status === 'success') {
       return true
     }
     return false
   })
 
-  plugins.some(function (command) {
-    var result = functions.checkCommand(command, from, to, content)
+  if (!builtin_found) {
+    plugins.some(function (command) {
+      var result = functions.checkCommand(command, from, to, content)
 
-    switch (result.status) {
-      case 'fail':
-        break
-      case 'update':
-        if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
-          functions.updateFile(result.file, result.data)
-          console.log(result.file + ' updated.')
-        }
-      case 'success':
-        return true
-    }
-    return false
-  })
+      switch (result.status) {
+        case 'fail':
+          break
+        case 'update':
+          if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
+            functions.updateFile(result.file, result.data)
+            console.log(result.file + ' updated.')
+          }
+        case 'success':
+          return true
+      }
+      return false
+    })
+  }
 
 })
