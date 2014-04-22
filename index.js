@@ -147,13 +147,14 @@ client.addListener('error', function(content) {
 client.addListener('message', function(from, to, content) {
   console.log(from + ' said ' + content + ' to ' + to)
 
-  builtins.forEach(function (command) {
+  builtins.some(function (command) {
     if (functions.checkCommand(command, from, to, content).status === 'success') {
-      return
+      return true
     }
+    return false
   })
 
-  plugins.forEach(function (command) {
+  plugins.some(function (command) {
     var result = functions.checkCommand(command, from, to, content)
 
     switch (result.status) {
@@ -165,8 +166,9 @@ client.addListener('message', function(from, to, content) {
           console.log(result.file + ' updated.')
         }
       case 'success':
-        return
+        return true
     }
+    return false
   })
 
 })
