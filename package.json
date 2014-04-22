@@ -16,6 +16,6 @@
     "level": "~0.18.0",
     "static-eval": "~0.1.0",
     "esprima": "~1.0.4",
-    "dieharderer": "0.1.x"
+    "github": "~0.1.16"
   }
 }
