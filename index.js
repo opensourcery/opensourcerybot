@@ -8,7 +8,7 @@ var client = new irc.Client(config.network, config.handle, config.params)
 client.config = config // We put the config inside the client for easy grabbing should it come up in a plugin
 
 var functions = {
-  loadPlugins: function () {
+  loadPlugins: function() {
     plugins = []
     fs.readdirSync('./lib/plugins').forEach(function (name) {
       var filename = path.resolve('./lib/plugins/' + name)
@@ -18,36 +18,32 @@ var functions = {
         plugin.weight = 0
       }
       plugins.push(plugin)
+      if (plugin.functions) {
+        for (func in plugin.functions) {
+          if (functions[func]) {
+            console.log("Duplicate function " + func + " from " + name + ".")
+          }
+          else {
+            functions[func] = plugin.functions[func]
+          }
+        }
+      }
     })
     plugins.sort(function(a, b) {
       return a.weight - b.weight
     })
   },
-  checkCommand: function (command, from, to, content) {
-    var requires = {}
-    var message = {
-      to: to,
-      from: from,
-      content: content
-    }
-    if (command.requires) {
-      command.requires.forEach(function (required) {
-        if (required.name && required.file) {
-          requires[required.name] = require(required.file)
-        }
-      })
-    }
-    return command.run(client, message, requires)
-  },
-  updateFile: function (file, data) {
+  updateFile: function(file, data) {
     var string = JSON.stringify(data)
     fs.writeFile(file, string, function(e) {
       if (e) {
         console.log(e)
       }
     })
+  },
+  randInt: function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1))
   }
-
 }
 
 var builtins = [
@@ -138,6 +134,23 @@ var builtins = [
   }
 ]
 
+var checkCommand = function (command, from, to, content) {
+  var requires = {functions:functions}
+  var message = {
+    to: to,
+    from: from,
+    content: content
+  }
+  if (command.requires) {
+    command.requires.forEach(function (required) {
+      if (required.name && required.file) {
+        requires[required.name] = require(required.file)
+      }
+    })
+  }
+  return command.run(client, message, requires)
+}
+
 var plugins = []
 functions.loadPlugins()
 
@@ -151,7 +164,7 @@ client.addListener('message', function(from, to, content) {
   console.log(from + ' said ' + content + ' to ' + to)
 
   builtin_found = builtins.some(function (command) {
-    if (functions.checkCommand(command, from, to, content).status === 'success') {
+    if (checkCommand(command, from, to, content).status === 'success') {
       return true
     }
     return false
@@ -159,7 +172,7 @@ client.addListener('message', function(from, to, content) {
 
   if (!builtin_found) {
     plugins.some(function (command) {
-      var result = functions.checkCommand(command, from, to, content)
+      var result = checkCommand(command, from, to, content)
 
       switch (result.status) {
         case 'fail':
