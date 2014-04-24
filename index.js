@@ -5,7 +5,16 @@ var irc = require('irc')
 var config = require('./config')
 
 var client = new irc.Client(config.network, config.handle, config.params)
+// Some client additions
 client.config = config // We put the config inside the client for easy grabbing should it come up in a plugin
+client.speak = function (message, content) {
+  if (message.to === config.handle) {
+    client.say(message.from, content)
+  }
+  else {
+    client.say(message.to, content)
+  }
+}
 
 var functions = {
   loadPlugins: function () {
@@ -59,7 +68,7 @@ var builtins = [
       var result = /^!reload$/.exec(message.content)
       if (result) {
         functions.loadPlugins()
-        client.say(message.to, 'Reloaded definition files.')
+        client.speak(message, 'Reloaded definition files.')
         return {status:"success"}
       }
       return {status:"fail"}
@@ -117,15 +126,15 @@ var builtins = [
           }
           if (helpfunctions) {
             helpfunctions.forEach(function (helpfunction) {
-              client.say(message.to, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
+              client.speak(message, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
             })
           }
           else {
-            client.say(message.to, 'Sorry, function not found or has no help info.')
+            client.speak(message, 'Sorry, function not found or has no help info.')
           }
         }
         else {
-          client.say(message.to, 'Possible help topics: ' + allbuiltinnames + ', ' + allpluginnames)
+          client.speak(message, 'Possible help topics: ' + allbuiltinnames + ', ' + allpluginnames)
         }
         return {status:"success"}
       }
