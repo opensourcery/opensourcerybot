@@ -8,7 +8,7 @@ var client = new irc.Client(config.network, config.handle, config.params)
 client.config = config // We put the config inside the client for easy grabbing should it come up in a plugin
 
 var functions = {
-  loadPlugins: function() {
+  loadPlugins: function () {
     plugins = []
     fs.readdirSync('./lib/plugins').forEach(function (name) {
       var filename = path.resolve('./lib/plugins/' + name)
@@ -29,19 +29,19 @@ var functions = {
         }
       }
     })
-    plugins.sort(function(a, b) {
+    plugins.sort(function (a, b) {
       return a.weight - b.weight
     })
   },
-  updateFile: function(file, data) {
+  updateFile: function (file, data) {
     var string = JSON.stringify(data)
-    fs.writeFile(file, string, function(e) {
+    fs.writeFile(file, string, function (e) {
       if (e) {
         console.log(e)
       }
     })
   },
-  randInt: function(min, max) {
+  randInt: function (min, max) {
     return Math.floor(Math.random() * (max - min + 1))
   }
 }
@@ -78,21 +78,21 @@ var builtins = [
       }
     ],
     run: function (client, message) {
-      var allbuiltinnames = builtins.map(function(elem) {
+      var allbuiltinnames = builtins.map(function (elem) {
         if (elem.hasOwnProperty('help')) {
           return elem.name
         }
       }).filter(function(value) {
         return value !== false
       }).join(", ")
-        , allpluginnames = plugins.map(function(elem) {
+        , allpluginnames = plugins.map(function (elem) {
         if (elem.hasOwnProperty('help')) {
           return elem.name
         }
         else {
           return false
         }
-      }).filter(function(value) {
+      }).filter(function (value) {
         return value !== false
       }).join(", ")
 
@@ -154,11 +154,11 @@ var checkCommand = function (command, from, to, content) {
 var plugins = []
 functions.loadPlugins()
 
-client.addListener('error', function(content) {
+client.addListener('error', function (content) {
   console.log('error: ', content)
 })
 
-client.addListener('message', function(from, to, content) {
+client.addListener('message', function (from, to, content) {
   var builtin_found = false
     , plugin_found = false
   console.log(from + ' said ' + content + ' to ' + to)
