@@ -5,8 +5,11 @@ var irc = require('irc')
 var config = require('./config')
 
 var client = new irc.Client(config.network, config.handle, config.params)
+
 // Some client additions
-client.config = config // We put the config inside the client for easy grabbing should it come up in a plugin
+// We put the config inside the client for easy grabbing should it come up in a plugin
+client.config = config
+// We add our own speaking function to whisper if the sender is whispering.
 client.speak = function (message, content) {
   if (message.to === config.handle) {
     client.say(message.from, content)
