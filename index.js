@@ -67,14 +67,16 @@ var builtins = [
         description: 'Reloads all definition files'
       }
     ],
-    run: function (client, message) {
-      var result = /^!reload$/.exec(message.content)
-      if (result) {
-        functions.loadPlugins()
-        client.speak(message, 'Reloaded definition files.')
-        return {status:"success"}
+    run: {
+        onmessage: function (client, message) {
+        var result = /^!reload$/.exec(message.content)
+        if (result) {
+          functions.loadPlugins()
+          client.speak(message, 'Reloaded definition files.')
+          return {status:"success"}
+        }
+        return {status:"fail"}
       }
-      return {status:"fail"}
     }
   },
   {
@@ -89,64 +91,66 @@ var builtins = [
         description: 'Gives more information about a specific help topic.'
       }
     ],
-    run: function (client, message) {
-      var allbuiltinnames = builtins.map(function (elem) {
-        if (elem.hasOwnProperty('help')) {
-          return elem.name
-        }
-      }).filter(function(value) {
-        return value !== false
-      }).join(", ")
-        , allpluginnames = plugins.map(function (elem) {
-        if (elem.hasOwnProperty('help')) {
-          return elem.name
-        }
-        else {
-          return false
-        }
-      }).filter(function (value) {
-        return value !== false
-      }).join(", ")
-
-      var helpfunctions
-      var command
-      var result = /^!help\s?(\S*)?$/.exec(message.content)
-
-      if (result) {
-        if (result[1]) {
-          command = result[1]
-          builtins.forEach(function (builtin) {
-            if (builtin.name === command && builtin.hasOwnProperty('help')) {
-              helpfunctions = builtin.help
-            }
-          })
-          if (!helpfunctions) {
-            plugins.forEach(function (plugin) {
-              if (plugin.name === command && plugin.hasOwnProperty('help')) {
-                helpfunctions = plugin.help
-              }
-            })
+    run: {
+      onmessage: function (client, message) {
+        var allbuiltinnames = builtins.map(function (elem) {
+          if (elem.hasOwnProperty('help')) {
+            return elem.name
           }
-          if (helpfunctions) {
-            helpfunctions.forEach(function (helpfunction) {
-              client.speak(message, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
-            })
+        }).filter(function(value) {
+          return value !== false
+        }).join(", ")
+          , allpluginnames = plugins.map(function (elem) {
+          if (elem.hasOwnProperty('help')) {
+            return elem.name
           }
           else {
-            client.speak(message, 'Sorry, function not found or has no help info.')
+            return false
           }
+        }).filter(function (value) {
+          return value !== false
+        }).join(", ")
+
+        var helpfunctions
+        var command
+        var result = /^!help\s?(\S*)?$/.exec(message.content)
+
+        if (result) {
+          if (result[1]) {
+            command = result[1]
+            builtins.forEach(function (builtin) {
+              if (builtin.name === command && builtin.hasOwnProperty('help')) {
+                helpfunctions = builtin.help
+              }
+            })
+            if (!helpfunctions) {
+              plugins.forEach(function (plugin) {
+                if (plugin.name === command && plugin.hasOwnProperty('help')) {
+                  helpfunctions = plugin.help
+                }
+              })
+            }
+            if (helpfunctions) {
+              helpfunctions.forEach(function (helpfunction) {
+                client.speak(message, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description)
+              })
+            }
+            else {
+              client.speak(message, 'Sorry, function not found or has no help info.')
+            }
+          }
+          else {
+            client.speak(message, 'Possible help topics: ' + allbuiltinnames + ', ' + allpluginnames)
+          }
+          return {status:"success"}
         }
-        else {
-          client.speak(message, 'Possible help topics: ' + allbuiltinnames + ', ' + allpluginnames)
-        }
-        return {status:"success"}
+        return {status:"fail"}
       }
-      return {status:"fail"}
     }
   }
 ]
 
-var checkCommand = function (command, from, to, content) {
+var checkCommand = function (command, event, from, to, content) {
   var requires = {functions:functions}
   var message = {
     to: to,
@@ -160,7 +164,7 @@ var checkCommand = function (command, from, to, content) {
       }
     })
   }
-  return command.run(client, message, requires)
+  return command.run[event](client, message, requires)
 }
 
 var plugins = []
@@ -170,13 +174,15 @@ client.addListener('error', function (content) {
   console.log('error: ', content)
 })
 
+// When a message is received, look through our functions for 'message' function
+// and run it. Stops looking for for functions when one returns 'success'.
 client.addListener('message', function (from, to, content) {
   var builtin_found = false
     , plugin_found = false
   console.log(from + ' said ' + content + ' to ' + to)
 
   builtin_found = builtins.some(function (command) {
-    if (checkCommand(command, from, to, content).status === 'success') {
+    if (checkCommand(command, 'onmessage', from, to, content).status === 'success') {
       return true
     }
     return false
@@ -184,7 +190,7 @@ client.addListener('message', function (from, to, content) {
 
   if (!builtin_found) {
     plugins.some(function (command) {
-      var result = checkCommand(command, from, to, content)
+      var result = checkCommand(command, 'onmessage', from, to, content)
 
       switch (result.status) {
         case 'fail':
