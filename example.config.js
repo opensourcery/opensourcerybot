@@ -1,12 +1,12 @@
-var config = {}
+var config = {};
 
-config.handle = 'osbot'
+config.handle = 'osbot';
 
-config.network = 'irc.freenode.net'
+config.network = 'irc.freenode.net';
 
 config.params = {
   channels: ['#examplechannel']
-}
+};
 
 config.github = {
   user: 'your user',
@@ -14,6 +14,6 @@ config.github = {
   password: 'password',
   repo: 'the repo of your bot',
   token: 'your user token'
-}
+};
 
-module.exports = config
+module.exports = config;
