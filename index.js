@@ -226,7 +226,7 @@ client.addListener('join', function (channel, user, content) {
   console.log(user + ' joined ' + channel);
 
   builtin_found = builtins.some(function (command) {
-    if (checkCommand(command, 'onjoin', from, to, content).status === 'success') {
+    if (checkCommand(command, 'onjoin', user, channel, content).status === 'success') {
       return true;
     }
     return false;
@@ -234,7 +234,7 @@ client.addListener('join', function (channel, user, content) {
 
   if (!builtin_found) {
     plugin_found = plugins.some(function (command) {
-      var result = checkCommand(command, 'onjoin', from, to, content);
+      var result = checkCommand(command, 'onjoin', user, channel, content);
 
       switch (result.status) {
         case 'fail':
