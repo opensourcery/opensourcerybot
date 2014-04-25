@@ -157,6 +157,9 @@ var checkCommand = function (command, event, from, to, content) {
     from: from,
     content: content
   }
+  var result = {
+    status: 'fail'
+  }
   if (command.requires) {
     command.requires.forEach(function (required) {
       if (required.name && required.file) {
@@ -164,7 +167,10 @@ var checkCommand = function (command, event, from, to, content) {
       }
     })
   }
-  return command.run[event](client, message, requires)
+  if (command.run.hasOwnProperty(event)) {
+    result = command.run[event](client, message, requires)
+  }
+  return result
 }
 
 var plugins = []
@@ -191,6 +197,42 @@ client.addListener('message', function (from, to, content) {
   if (!builtin_found) {
     plugins.some(function (command) {
       var result = checkCommand(command, 'onmessage', from, to, content)
+
+      switch (result.status) {
+        case 'fail':
+          break
+        case 'update':
+          if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
+            functions.updateFile(result.file, result.data)
+            console.log(result.file + ' updated.')
+          }
+        case 'success':
+          return true
+      }
+      return false
+    })
+  }
+
+})
+
+// When a user joins the channel, look through all plugins and builtins for an
+// onjoin function, and run any of them that exist. Note that all onjoin functions
+// get run, unlike with onmessage, which stops at the first success.
+client.addListener('join', function (channel, user, content) {
+  var builtin_found = false
+    , plugin_found = false
+  console.log(user + ' joined ' + channel)
+
+  builtin_found = builtins.some(function (command) {
+    if (checkCommand(command, 'onjoin', from, to, content).status === 'success') {
+      return true
+    }
+    return false
+  })
+
+  if (!builtin_found) {
+    plugins.some(function (command) {
+      var result = checkCommand(command, 'onjoin', from, to, content)
 
       switch (result.status) {
         case 'fail':
