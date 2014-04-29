@@ -31,13 +31,8 @@ var functions = {
       }
       plugins.push(plugin);
       if (plugin.functions) {
-        for (func in plugin.functions) {
-          if (functions[func]) {
-            console.log("Duplicate function " + func + " from " + name + ".");
-          }
-          else {
-            functions[func] = plugin.functions[func];
-          }
+        for (var func in plugin.functions) {
+          functions[func] = plugin.functions[func];
         }
       }
     });
