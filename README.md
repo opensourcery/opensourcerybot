@@ -105,3 +105,4 @@ OSbot is meant to both be useful and entertaining, and it has several ways of co
 | `Are you sure?` | Comeback | OSbot will pull a random saying from its `!comeback` bank whenever another user posts something to the channel that includes OSbot's handle (see [configuration](#configuration)). These often take the form of sentences that could be part of a conversation--but often are just nonsense. |
 | `Die Hard 2: Die Harder` | Dieharderer | When OSbot sees something in chat that could make a good and/or bad movie sequel title, they will say it. |
 | `Snow? Did somebody say snow?` | Trigger | Specific triggers may be set up for OSbot that look for certain words and spit out canned responses. This function is still being improved and worked on. |
+| `so irc`, `such wow` | Wow | Doge! Triggered by the word `wow` appearing in a chat message, OSbot will randomly state a saved `!wow` message. |
