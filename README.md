@@ -27,7 +27,7 @@ An example of a completed configuration file has been provided with `example.con
   * **repo** (string): The Github repository that you wish to file issues with.
   * **token** (string): The API token of the Github user you wish to log in as. If a token is included then `user`, `email`, and `password` are not required.
 
-## Quick Help
+## Quick Help <a name="quickhelp"></a>
 
 To get assistance with opensourcerybot, simply type the following in any channel it is running in:
 
@@ -43,7 +43,7 @@ This will list all possible help topics.
 
 where `[topic]` is one of the topics listed in the previous will give more detailed information, including commands that topic may govern.
 
-## Common Uses
+## Common Uses <a name="commonuses"></a>
 
 Since the `!help` function isn't necessarily the best way to learn functions you'd want to use, here is a list of the most common uses of OSbot and how they may be best utilized. For explanations on why OSbot did something, skip down to [Common Questions](#commonquestions).
 
@@ -51,7 +51,7 @@ Since the `!help` function isn't necessarily the best way to learn functions you
 
 OSbot is versatile in how you can talk to it! Saying any OSbot command in a channel OSbot occupies in will provoke a public response from OSbot, while sending a private message to OSbot will ensure your communication will stay just between you.
 
-For example, typing `[!help](#quickhelp)` inside of a public channel will have OSbot list all of the help functions for all to see. If you PMed that to OSbot, only you would see the responses.
+For example, typing [`!help`](#quickhelp) inside of a public channel will have OSbot list all of the help functions for all to see. If you PMed that to OSbot, only you would see the responses.
 
 ### Karma (aka ++/--)
 
@@ -91,7 +91,7 @@ If a user is AFK/unresponsive/logged out, you can leave a message for them to re
 | `!tell [user] [message]`     | `!tell jwaxo OSbot is the best!` | Saves a message that will automatically be PMed to a user the next time they act responsive on a server; either when they log in or when they say something on the channel. |
 | `!telllist [user]` | `!telllist jwaxo` | States how many tells a user has stored for them. Due to privacy concerns does not list the individual tells. |
 
-## Common Questions
+## Common Questions <a name="commonquestions"></a>
 
 A lot of questions come from OSbot's actions, but hopefully some of these questions/complaints/screams of anguish can be answered below. If you have a question that isn't answered here, ask it in the [OSbot Issues](https://github.com/opensourcery/opensourcerybot/issues) section of the repo and it will probably be added here.
 
