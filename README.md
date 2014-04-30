@@ -60,8 +60,8 @@ OSbot tracks karma uses common IRC karma commands. There are several easy ways t
 | Command Format | Example                               | Explanation           |
 |----------------|---------------------------------------|-----------------------|
 | `[user]++`     | `jwaxo++`, `jwaxo++ for being awesome` | Adds karma to a user. |
-* `[user]--`     | `jwaxo--`, `jwaxo-- for messing with OSbot again` | Removes karma from a user. |
-* `[user][modification] [diceroll] | `jwaxo++ d6 for adding dice` | Modifies a random amount of karma based on a die roll. |
+| `[user]--`     | `jwaxo--`, `jwaxo-- for messing with OSbot again` | Removes karma from a user. |
+| `[user][modification] [diceroll]` | `jwaxo++ d6 for adding dice` | Modifies a random amount of karma based on a die roll. |
 
 Karma can be checked with `!karma [user]`, which will show the total karma, as well as how many up-votes and down-votes a user has received globally.
 
@@ -74,8 +74,8 @@ The end outcome of @groups is that ad hoc chatrooms can be created on-the-fly, w
 | Command Format | Example                               | Explanation           |
 |----------------|---------------------------------------|-----------------------|
 | `@[group]`     | `@lunch Let's get lunch!` | Private messages all users in a group with your name attached as well as what group the message originated from. Users can then @group back from the PM window or a public location if they wish for it to be publicly known by users outside of the group. |
-* `!groupadd [user] to [group]`     | `!groupadd jwaxo to lunch` | Adds a user to a group. If that group does not exist, it will be created, and the user will be automatically added to it. |
-* `!groupremove [user] from [group]` | `!groupremove jwaxo from lunch` | Removes a user from a group. If that group is then empty, it will be deleted. |
+| `!groupadd [user] to [group]`     | `!groupadd jwaxo to lunch` | Adds a user to a group. If that group does not exist, it will be created, and the user will be automatically added to it. |
+| `!groupremove [user] from [group]` | `!groupremove jwaxo from lunch` | Removes a user from a group. If that group is then empty, it will be deleted. |
 
 By keeping the @group conversations inside a PM, channel static is cut down by a moderate amount, duplicate messages are prevented when OSbot then sends the message out, and all users in that group are pinged by their IRC client due to a PM instead of due to their name being read out in an exhaustive list.
 
@@ -88,7 +88,7 @@ If a user is AFK/unresponsive/logged out, you can leave a message for them to re
 | Command Format | Example                               | Explanation           |
 |----------------|---------------------------------------|-----------------------|
 | `!tell [user] [message]`     | `!tell jwaxo OSbot is the best!` | Saves a message that will automatically be PMed to a user the next time they act responsive on a server; either when they log in or when they say something on the channel. |
-| `!telllist [user] | `!telllist jwaxo` | States how many tells a user has stored for them. Due to privacy concerns does not list the individual tells. |
+| `!telllist [user]` | `!telllist jwaxo` | States how many tells a user has stored for them. Due to privacy concerns does not list the individual tells. |
 
 ## Common Questions
 
