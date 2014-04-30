@@ -3,13 +3,13 @@ opensourcerybot
 
 An IRC bot for fun at OpenSourcery.
 
-Originally created for stupid sayings and
+Originally created for stupid sayings and small helper functions, OSbot has grown to the point of needing a proper README.
 
 ## Installation
 
 0. Have `node.js` installed on your machine of choice
 1. Clone this repo to a desired location that you have read/write access to
-2. Copy and (complete)[#configuration] `example.config.js` to `config.js`
+2. Copy and [complete the configuration file](#configuration) `example.config.js` to `config.js`
 3. Run `node index.js`
 
 ## Configuration
@@ -51,7 +51,7 @@ Since the `!help` function isn't necessarily the best way to learn functions you
 
 OSbot is versatile in how you can talk to it! Saying any OSbot command in a channel OSbot occupies in will provoke a public response from OSbot, while sending a private message to OSbot will ensure your communication will stay just between you.
 
-For example, typing "[!help](#quickhelp)" inside of a public channel will have OSbot list all of the help functions for all to see. If you PMed that to OSbot, only you would see the responses.
+For example, typing `[!help](#quickhelp)` inside of a public channel will have OSbot list all of the help functions for all to see. If you PMed that to OSbot, only you would see the responses.
 
 ### Karma (aka ++/--)
 
@@ -74,7 +74,7 @@ The end outcome of @groups is that ad hoc chatrooms can be created on-the-fly, w
 | Command Format | Example                               | Explanation           |
 |----------------|---------------------------------------|-----------------------|
 | `@[group] [message]`     | `@lunch Let's get lunch!` | Private messages all users in a group with your name attached as well as what group the message originated from. Users can then @group back from the PM window or a public location if they wish for it to be publicly known by users outside of the group. |
-| `@all [message] | `@all I love @groups!` | Private messages all users that have ever been added to a group. That's right: any user ever added to a group automatically gets added to @all. Users can be removed from @all like normal if they really don't want to receive @all communications. |
+| `@all [message]` | `@all I love @groups!` | Private messages all users that have ever been added to a group. That's right: any user ever added to a group automatically gets added to @all. Users can be removed from @all like normal if they really don't want to receive @all communications. |
 | `!groupadd [user] to [group]`     | `!groupadd jwaxo to lunch` | Adds a user to a group. If that group does not exist, it will be created, and the user will be automatically added to it. |
 | `!groupremove [user] from [group]` | `!groupremove jwaxo from lunch` | Removes a user from a group. If that group is then empty, it will be deleted. |
 
