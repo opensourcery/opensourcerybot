@@ -73,7 +73,8 @@ The end outcome of @groups is that ad hoc chatrooms can be created on-the-fly, w
 
 | Command Format | Example                               | Explanation           |
 |----------------|---------------------------------------|-----------------------|
-| `@[group]`     | `@lunch Let's get lunch!` | Private messages all users in a group with your name attached as well as what group the message originated from. Users can then @group back from the PM window or a public location if they wish for it to be publicly known by users outside of the group. |
+| `@[group] [message]`     | `@lunch Let's get lunch!` | Private messages all users in a group with your name attached as well as what group the message originated from. Users can then @group back from the PM window or a public location if they wish for it to be publicly known by users outside of the group. |
+| `@all [message] | `@all I love @groups!` | Private messages all users that have ever been added to a group. That's right: any user ever added to a group automatically gets added to @all. Users can be removed from @all like normal if they really don't want to receive @all communications. |
 | `!groupadd [user] to [group]`     | `!groupadd jwaxo to lunch` | Adds a user to a group. If that group does not exist, it will be created, and the user will be automatically added to it. |
 | `!groupremove [user] from [group]` | `!groupremove jwaxo from lunch` | Removes a user from a group. If that group is then empty, it will be deleted. |
 
