@@ -79,6 +79,17 @@ The end outcome of @groups is that ad hoc chatrooms can be created on-the-fly, w
 
 By keeping the @group conversations inside a PM, channel static is cut down by a moderate amount, duplicate messages are prevented when OSbot then sends the message out, and all users in that group are pinged by their IRC client due to a PM instead of due to their name being read out in an exhaustive list.
 
+### Tell (aka That Message Thing)
+
+If a user is AFK/unresponsive/logged out, you can leave a message for them to receive the next time they either log on to or say something in the channel. The user will receive the message, the time it was left, and your username, all in a PM from OSbot. It's perfect for non-important messages while a user is on vacation, entranced in their work, or in a meeting.
+
+***NOTE***: Even though !tell tries to remain as private as possible, sensitive information should not be shared this way. IRC is not the most secure of platforms, and it's extremely easy for a user to change their nickname, receive a user's stored tells, and change them back.
+
+| Command Format | Example                               | Explanation           |
+|----------------|---------------------------------------|-----------------------|
+| `!tell [user] [message]`     | `!tell jwaxo OSbot is the best!` | Saves a message that will automatically be PMed to a user the next time they act responsive on a server; either when they log in or when they say something on the channel. |
+| `!telllist [user] | `!telllist jwaxo` | States how many tells a user has stored for them. Due to privacy concerns does not list the individual tells. |
+
 ## Common Questions
 
 A lot of questions come from OSbot's actions, but hopefully some of these questions/complaints/screams of anguish can be answered below. If you have a question that isn't answered here, ask it in the [OSbot Issues](https://github.com/opensourcery/opensourcerybot/issues) section of the repo and it will probably be added here.
