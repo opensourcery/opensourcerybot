@@ -19,6 +19,8 @@ client.speak = function (message, content) {
   }
 };
 
+var requires = {};
+
 var functions = {
   loadPlugins: function () {
     plugins = [];
@@ -34,6 +36,14 @@ var functions = {
         for (var func in plugin.functions) {
           functions[func] = plugin.functions[func];
         }
+      }
+      if (plugin.requires) {
+        requires[plugin.name] = {};
+        plugin.requires.forEach(function (required) {
+          if (required.name && required.file) {
+            requires[plugin.name][required.name] = require(required.file);
+          }
+        });
       }
     });
     plugins.sort(function (a, b) {
@@ -52,6 +62,8 @@ var functions = {
     return Math.floor(Math.random() * (max - min + 1));
   }
 };
+
+requires.functions = functions;
 
 var builtins = [
   {
@@ -146,9 +158,6 @@ var builtins = [
 ];
 
 var checkCommand = function (command, event, from, to, content) {
-  var requires = {
-    functions: functions
-  };
   var message = {
     to: to,
     from: from,
@@ -157,13 +166,6 @@ var checkCommand = function (command, event, from, to, content) {
   var result = {
     status: 'fail'
   };
-  if (command.requires) {
-    command.requires.forEach(function (required) {
-      if (required.name && required.file) {
-        requires[required.name] = require(required.file);
-      }
-    });
-  }
   if (command.run.hasOwnProperty(event)) {
     result = command.run[event](client, message, requires);
   }
