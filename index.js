@@ -204,6 +204,8 @@ client.addListener('message', function (from, to, content) {
           if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
             functions.updateFile(result.file, result.data);
             console.log(result.file + ' updated.');
+          } else {
+            console.log('Missing update file or data.');
           }
         case 'success':
           return true;
