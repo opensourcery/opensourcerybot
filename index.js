@@ -41,7 +41,17 @@ var functions = {
         requires[plugin.name] = {};
         plugin.requires.forEach(function (required) {
           if (required.name && required.file) {
-            requires[plugin.name][required.name] = require(required.file);
+            fs.exists(required.file, function(exists) {
+              if (exists) {
+                requires[plugin.name][required.name] = require(required.file);
+              } else {
+                fs.writeFile(required.file, "{}", function (e) {
+                  if (e) {
+                    console.log(e);
+                  }
+                });
+              }
+            });
           }
         });
       }
