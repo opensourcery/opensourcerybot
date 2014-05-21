@@ -45,11 +45,21 @@ var functions = {
               if (exists) {
                 requires[plugin.name][required.name] = require(required.file);
               } else {
-                fs.writeFile(required.file, "{}", function (e) {
+                var newfilecontent;
+                switch (required.type) {
+                  case 'object':
+                    newfilecontent = "{}";
+                    break;
+                  case 'array':
+                    newfilecontent = "[]";
+                    break;
+                }
+                fs.writeFile(required.file, newfilecontent, function (e) {
                   if (e) {
                     console.log(e);
                   }
                 });
+                requires[plugin.name][required.name] = JSON.parse(newfilecontent);
               }
             });
           }
