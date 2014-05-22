@@ -24,6 +24,7 @@ var requires = {};
 var functions = {
   loadPlugins: function () {
     plugins = [];
+    var startups = [];
     fs.readdirSync('./lib/plugins').forEach(function (name) {
       var filename = path.resolve('./lib/plugins/' + name);
       delete require.cache[filename];
@@ -37,6 +38,11 @@ var functions = {
           functions[func] = plugin.functions[func];
         }
       }
+      if (plugin.startup) {
+        plugin.startup.forEach(function(startfunc) {
+          startups.push(startfunc);
+        });
+      }
       if (plugin.requires) {
         requires[plugin.name] = {};
         plugin.requires.forEach(function (required) {
@@ -44,7 +50,8 @@ var functions = {
             fs.exists(required.file, function(exists) {
               if (exists) {
                 requires[plugin.name][required.name] = require(required.file);
-              } else {
+              }
+              else if (required.type) {
                 var newfilecontent;
                 switch (required.type) {
                   case 'object':
@@ -69,6 +76,17 @@ var functions = {
     plugins.sort(function (a, b) {
       return a.weight - b.weight;
     });
+    // We wait until now to run the startups, so that they go in order.
+    startups.sort(function (a, b) {
+      return a.weight - b.weight;
+    });
+    if (startups.length > 0) {
+      startups.forEach(function(startfunc) {
+        if (startfunc.function) {
+          startfunc.function(client);
+        }
+      });
+    }
   },
   updateFile: function (file, data) {
     var string = JSON.stringify(data);
