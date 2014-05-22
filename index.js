@@ -113,14 +113,12 @@ var builtins = [
       }
     ],
     run: {
-        onmessage: function (client, message) {
-        var result = /^!reload$/.exec(message.content);
-        if (result) {
+      onmessage: {
+        reload: function (client, message) {
           functions.loadPlugins();
           client.speak(message, 'Reloaded definition files.');
           return {status:"success"};
         }
-        return {status:"fail"};
       }
     }
   },
@@ -137,32 +135,33 @@ var builtins = [
       }
     ],
     run: {
-      onmessage: function (client, message) {
-        var allbuiltinnames = builtins.map(function (elem) {
-          if (elem.hasOwnProperty('help')) {
-            return elem.name;
+      onmessage: {
+        help: function (client, message, args) {
+          var command;
+          var allbuiltinnames = builtins.map(function (elem) {
+            if (elem.hasOwnProperty('help')) {
+              return elem.name;
+            }
+          }).filter(function(value) {
+            return value !== false;
+          }).join(", ")
+            , allpluginnames = plugins.map(function (elem) {
+            if (elem.hasOwnProperty('help')) {
+              return elem.name;
+            }
+            else {
+              return false;
+            }
+          }).filter(function (value) {
+            return value !== false;
+          }).join(", ");
+          var helpfunctions;
+          
+          if (args[0]) {
+            command = args[0];
           }
-        }).filter(function(value) {
-          return value !== false;
-        }).join(", ")
-          , allpluginnames = plugins.map(function (elem) {
-          if (elem.hasOwnProperty('help')) {
-            return elem.name;
-          }
-          else {
-            return false;
-          }
-        }).filter(function (value) {
-          return value !== false;
-        }).join(", ");
 
-        var helpfunctions;
-        var command;
-        var result = /^!help\s?(\S*)?$/.exec(message.content);
-
-        if (result) {
-          if (result[1]) {
-            command = result[1];
+          if (command) {
             builtins.forEach(function (builtin) {
               if (builtin.name === command && builtin.hasOwnProperty('help')) {
                 helpfunctions = builtin.help;
@@ -189,7 +188,6 @@ var builtins = [
           }
           return {status:"success"};
         }
-        return {status:"fail"};
       }
     }
   }
@@ -210,6 +208,16 @@ var checkCommand = function (command, event, from, to, content) {
   return result;
 };
 
+var checkBuiltin = function (builtin, event, command, message, args) {
+  var result = {
+    status: 'fail'
+  };
+  if (builtin.run.hasOwnProperty(event) && builtin.run[event].hasOwnProperty(command)) {
+    result = builtin.run[event][command](client, message, args, requires);
+  }
+  return result;
+};
+
 var plugins = [];
 functions.loadPlugins();
 
@@ -224,9 +232,24 @@ client.addListener('message', function (from, to, content) {
       plugin_found = false;
   console.log(from + ' said ' + content + ' to ' + to);
 
-  builtin_found = builtins.some(function (command) {
-    if (checkCommand(command, 'onmessage', from, to, content).status === 'success') {
-      return true;
+  builtin_found = builtins.some(function (builtin) {
+    var input = /^!(\S+)(.*)$/.exec(content);
+    var args = [];
+    var command;
+    var message = {
+      to: to,
+      from: from,
+      content: content
+    };
+    
+    if (input && input[1]) {
+      command = input[1];
+      if (input[2]) {
+        args = input[2].trim().split([' ']);
+      }
+      if (checkBuiltin(builtin, 'onmessage', command, message, args).status === 'success') {
+        return true;
+      }
     }
     return false;
   });
