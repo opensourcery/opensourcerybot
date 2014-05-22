@@ -25,7 +25,7 @@ var functions = {
   loadPlugins: function () {
     plugins = [];
     var startups = [];
-    var workingplugins = []; // Add plugin filenames here as they are fixed.
+    var workingplugins = ['alarm.js']; // Add plugin filenames here as they are fixed.
     fs.readdirSync('./lib/plugins').forEach(function (name) {
       if (workingplugins.indexOf(name) < 0) {
         return true;
