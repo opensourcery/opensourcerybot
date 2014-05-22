@@ -25,7 +25,11 @@ var functions = {
   loadPlugins: function () {
     plugins = [];
     var startups = [];
+    var workingplugins = []; // Add plugin filenames here as they are fixed.
     fs.readdirSync('./lib/plugins').forEach(function (name) {
+      if (workingplugins.indexOf(name) < 0) {
+        return true;
+      }
       var filename = path.resolve('./lib/plugins/' + name);
       delete require.cache[filename];
       var plugin = require('./lib/plugins/' + name);
@@ -193,22 +197,7 @@ var builtins = [
   }
 ];
 
-var checkCommand = function (command, event, from, to, content) {
-  var message = {
-    to: to,
-    from: from,
-    content: content
-  };
-  var result = {
-    status: 'fail'
-  };
-  if (command.run.hasOwnProperty(event)) {
-    result = command.run[event](client, message, requires);
-  }
-  return result;
-};
-
-var checkBuiltin = function (builtin, event, command, message, args) {
+var checkCommand = function (builtin, event, command, message, args) {
   var result = {
     status: 'fail'
   };
@@ -229,34 +218,34 @@ client.addListener('error', function (content) {
 // and run it. Stops looking for for functions when one returns 'success'.
 client.addListener('message', function (from, to, content) {
   var builtin_found = false,
-      plugin_found = false;
+      plugin_found = false,
+      input = /^!(\S+)(.*)$/.exec(content),
+      args = [],
+      command;
+  var message = {
+    to: to,
+    from: from,
+    content: content
+  };
   console.log(from + ' said ' + content + ' to ' + to);
 
-  builtin_found = builtins.some(function (builtin) {
-    var input = /^!(\S+)(.*)$/.exec(content);
-    var args = [];
-    var command;
-    var message = {
-      to: to,
-      from: from,
-      content: content
-    };
-    
-    if (input && input[1]) {
-      command = input[1];
-      if (input[2]) {
-        args = input[2].trim().split([' ']);
-      }
-      if (checkBuiltin(builtin, 'onmessage', command, message, args).status === 'success') {
+  if (input[2]) {
+    args = input[2].trim().split([' ']);
+  }
+
+  if (input && input[1]) {
+    command = input[1];
+    builtin_found = builtins.some(function (builtin) {
+      if (checkCommand(builtin, 'onmessage', command, message, args).status === 'success') {
         return true;
       }
-    }
+    });
     return false;
-  });
+  }
 
   if (!builtin_found) {
-    plugin_found = plugins.some(function (command) {
-      var result = checkCommand(command, 'onmessage', from, to, content);
+    plugin_found = plugins.some(function (plugin) {
+      var result = checkCommand(plugin, 'onmessage', command, message, args);
 
       switch (result.status) {
         case 'fail':
