@@ -197,12 +197,12 @@ var builtins = [
   }
 ];
 
-var checkCommand = function (builtin, event, command, message, args) {
+var checkCommand = function (plugin, event, command, message, args) {
   var result = {
     status: 'fail'
   };
-  if (builtin.run.hasOwnProperty(event) && builtin.run[event].hasOwnProperty(command)) {
-    result = builtin.run[event][command](client, message, args, requires);
+  if (plugin.run.hasOwnProperty(event) && plugin.run[event].hasOwnProperty(command)) {
+    result = plugin.run[event][command](client, message, args, requires);
   }
   return result;
 };
@@ -239,29 +239,29 @@ client.addListener('message', function (from, to, content) {
       if (checkCommand(builtin, 'onmessage', command, message, args).status === 'success') {
         return true;
       }
-    });
-    return false;
-  }
-
-  if (!builtin_found) {
-    plugin_found = plugins.some(function (plugin) {
-      var result = checkCommand(plugin, 'onmessage', command, message, args);
-
-      switch (result.status) {
-        case 'fail':
-          break
-        case 'update':
-          if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
-            functions.updateFile(result.file, result.data);
-            console.log(result.file + ' updated.');
-          } else {
-            console.log('Missing update file or data.');
-          }
-        case 'success':
-          return true;
-      }
       return false;
     });
+
+    if (!builtin_found) {
+      plugin_found = plugins.some(function (plugin) {
+        var result = checkCommand(plugin, 'onmessage', command, message, args);
+
+        switch (result.status) {
+          case 'fail':
+            break
+          case 'update':
+            if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
+              functions.updateFile(result.file, result.data);
+              console.log(result.file + ' updated.');
+            } else {
+              console.log('Missing update file or data.');
+            }
+          case 'success':
+            return true;
+        }
+        return false;
+      });
+    }
   }
 
 });
