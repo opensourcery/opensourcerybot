@@ -50,7 +50,8 @@ var functions = {
             fs.exists(required.file, function(exists) {
               if (exists) {
                 requires[plugin.name][required.name] = require(required.file);
-              } else {
+              }
+              else if (required.type) {
                 var newfilecontent;
                 switch (required.type) {
                   case 'object':
@@ -59,8 +60,6 @@ var functions = {
                   case 'array':
                     newfilecontent = "[]";
                     break;
-                  default:
-                    newfilecontent = "{}";
                 }
                 fs.writeFile(required.file, newfilecontent, function (e) {
                   if (e) {
@@ -84,7 +83,6 @@ var functions = {
     if (startups.length > 0) {
       startups.forEach(function(startfunc) {
         if (startfunc.function) {
-          console.log('Found startup function.');
           startfunc.function(client);
         }
       });
