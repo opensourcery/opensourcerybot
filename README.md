@@ -49,13 +49,13 @@ Since the `!help` function isn't necessarily the best way to learn functions you
 
 ### Initial Stuff
 
-OSbot is versatile in how you can talk to it! Saying any OSbot command in a channel OSbot occupies in will provoke a public response from OSbot, while sending a private message to OSbot will ensure your communication will stay just between you.
+OSbot is versatile in how you can talk to it! Saying any OSbot command in a channel OSbot occupies will provoke a public response from OSbot, while sending a private message to OSbot will ensure your communication will stay just between you.
 
 For example, typing [`!help`](#quickhelp) inside of a public channel will have OSbot list all of the help functions for all to see. If you PMed that to OSbot, only you would see the responses.
 
 ### Karma (aka ++/--)
 
-OSbot tracks karma uses common IRC karma commands. There are several easy ways to modify it:
+OSbot tracks karma by using common IRC karma commands. There are several easy ways to modify it:
 
 | Command Format | Example                               | Explanation           |
 |----------------|---------------------------------------|-----------------------|
