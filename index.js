@@ -123,7 +123,7 @@ var builtins = [
         var result = /^!reload$/.exec(message.content);
         if (result) {
           functions.loadPlugins();
-          client.speak(message, 'Reloaded definition files.');
+          client.say(message.from, 'Reloaded definition files.');
           return {status:"success"};
         }
         return {status:"fail"};
@@ -183,15 +183,15 @@ var builtins = [
             }
             if (helpfunctions) {
               helpfunctions.forEach(function (helpfunction) {
-                client.speak(message, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description);
+                client.say(message.from, 'Usage: ' + helpfunction.usage + ', ' + helpfunction.description);
               });
             }
             else {
-              client.speak(message, 'Sorry, function not found or has no help info.');
+              client.say(message.from, 'Sorry, function not found or has no help info.');
             }
           }
           else {
-            client.speak(message, 'Possible help topics: ' + allbuiltinnames + ', ' + allpluginnames);
+            client.say(message.from, 'Possible help topics: ' + allbuiltinnames + ', ' + allpluginnames);
           }
           return {status:"success"};
         }
