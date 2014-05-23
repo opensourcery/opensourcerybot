@@ -69,6 +69,10 @@ var functions = {
                   });
                   requires[plugin.name][required.name] = JSON.parse(newfilecontent);
                 }
+                else {
+                  // It's probably a node-module then.
+                  requires[plugin.name][required.name] = require(required.file);
+                }
               });
             }
           });
