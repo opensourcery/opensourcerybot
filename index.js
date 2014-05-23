@@ -28,49 +28,51 @@ var functions = {
     fs.readdirSync('./lib/plugins').forEach(function (name) {
       var filename = path.resolve('./lib/plugins/' + name);
       delete require.cache[filename];
-      var plugin = require('./lib/plugins/' + name);
-      if (!plugin.weight) {
-        plugin.weight = 0;
-      }
-      plugins.push(plugin);
-      if (plugin.functions) {
-        for (var func in plugin.functions) {
-          functions[func] = plugin.functions[func];
+      if (config.disable.indexOf(name) < 0 ) {
+        var plugin = require('./lib/plugins/' + name);
+        if (!plugin.weight) {
+          plugin.weight = 0;
         }
-      }
-      if (plugin.startup) {
-        plugin.startup.forEach(function(startfunc) {
-          startups.push(startfunc);
-        });
-      }
-      if (plugin.requires) {
-        requires[plugin.name] = {};
-        plugin.requires.forEach(function (required) {
-          if (required.name && required.file) {
-            fs.exists(required.file, function(exists) {
-              if (exists) {
-                requires[plugin.name][required.name] = require(required.file);
-              }
-              else if (required.type) {
-                var newfilecontent;
-                switch (required.type) {
-                  case 'object':
-                    newfilecontent = "{}";
-                    break;
-                  case 'array':
-                    newfilecontent = "[]";
-                    break;
-                }
-                fs.writeFile(required.file, newfilecontent, function (e) {
-                  if (e) {
-                    console.log(e);
-                  }
-                });
-                requires[plugin.name][required.name] = JSON.parse(newfilecontent);
-              }
-            });
+        plugins.push(plugin);
+        if (plugin.functions) {
+          for (var func in plugin.functions) {
+            functions[func] = plugin.functions[func];
           }
-        });
+        }
+        if (plugin.startup) {
+          plugin.startup.forEach(function(startfunc) {
+            startups.push(startfunc);
+          });
+        }
+        if (plugin.requires) {
+          requires[plugin.name] = {};
+          plugin.requires.forEach(function (required) {
+            if (required.name && required.file) {
+              fs.exists(required.file, function(exists) {
+                if (exists) {
+                  requires[plugin.name][required.name] = require(required.file);
+                }
+                else if (required.type) {
+                  var newfilecontent;
+                  switch (required.type) {
+                    case 'object':
+                      newfilecontent = "{}";
+                      break;
+                    case 'array':
+                      newfilecontent = "[]";
+                      break;
+                  }
+                  fs.writeFile(required.file, newfilecontent, function (e) {
+                    if (e) {
+                      console.log(e);
+                    }
+                  });
+                  requires[plugin.name][required.name] = JSON.parse(newfilecontent);
+                }
+              });
+            }
+          });
+        }
       }
     });
     plugins.sort(function (a, b) {
