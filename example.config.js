@@ -4,6 +4,8 @@ config.handle = 'osbot';
 
 config.network = 'irc.freenode.net';
 
+config.disable = ['silly.js'];
+
 config.params = {
   channels: ['#examplechannel']
 };
