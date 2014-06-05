@@ -193,12 +193,46 @@ var builtins = [
   }
 ];
 
-var checkCommand = function (plugin, event, command, message, args) {
+var checkCommand = function (plugin, event, message) {
+  var args = [];
+  var command;
   var result = {
     status: 'fail'
   };
-  if (plugin.hasOwnProperty(event) && plugin[event].hasOwnProperty(command)) {
-    result = plugin[event][command](client, message, args, requires);
+  var message_groups = {
+    run: /^!(\S+)(.*)$/,
+    group: /^@(\S+)(.*)$/ // Ideally this could be set up by the group plugin,
+    // but there is no infrastructure for it at the moment, thus it is hard-defined
+  };
+  if (event === 'onmessage') {
+    for (var command_type in message_groups) {
+      var input = message_groups[command_type].exec(message.content);
+      if (input) {
+
+        if (input[2]) {
+          args = input[2].trim().split([' ']);
+        }
+        if (input[1]) {
+          command = input[1];
+          if (plugin.hasOwnProperty(command_type) && plugin[command_type].hasOwnProperty(command)) {
+            result = plugin[command_type][command](client, message, args, requires);
+          }
+        }
+      }
+    }
+    if (result.status === 'fail') {
+      // We didn't find a named function, so do other more anonymous ones, like
+      // regex
+      if (plugin.hasOwnProperty('regex')) {
+        result = plugin.regex(client, message, requires);
+      }
+    }
+  }
+  // We aren't checking for onmessage commands, but some other function, so look for that
+  else {
+    if (plugin.hasOwnProperty(event) && plugin[command_type].hasOwnProperty(command)) {
+      result = plugin[command_type][command](client, message, command);
+    }
   }
   return result;
 };
@@ -215,11 +249,6 @@ client.addListener('error', function (content) {
 client.addListener('message', function (from, to, content) {
   var builtin_found = false,
       plugin_found = false,
-      message_groups = {
-        run: /^!(\S+)(.*)$/,
-        group: /^@(\S+)(.*)$/ // Ideally this could be set up by the group plugin,
-        // but there is no infrastructure for it at the moment, thus it is hard-defined
-      },
       args = [],
       command;
   var message = {
@@ -229,44 +258,32 @@ client.addListener('message', function (from, to, content) {
   };
   console.log(from + ' said ' + content + ' to ' + to);
 
-  for (var event in message_groups) {
-    var input = message_groups[event].exec(content);
-    if (input) {
+  builtin_found = builtins.some(function (builtin) {
 
-      if (input[2]) {
-        args = input[2].trim().split([' ']);
-      }
-      if (input[1]) {
-        command = input[1];
-        builtin_found = builtins.some(function (builtin) {
-          if (checkCommand(builtin, event, command, message, args).status === 'success') {
-            return true;
-          }
-          return false;
-        });
-
-        if (!builtin_found) {
-          plugin_found = plugins.some(function (plugin) {
-            var result = checkCommand(plugin, 'onmessage', command, message, args);
-
-            switch (result.status) {
-              case 'fail':
-                break
-              case 'update':
-                if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
-                  functions.updateFile(result.file, result.data);
-                  console.log(result.file + ' updated.');
-                } else {
-                  console.log('Missing update file or data.');
-                }
-              case 'success':
-                return true;
-            }
-            return false;
-          });
-        }
-      }
+    if (checkCommand(builtin, 'onmessage', message).status === 'success') {
+      return true;
     }
+  });
+
+  if (!builtin_found) {
+    plugin_found = plugins.some(function (plugin) {
+      var result = plugin['onmessage'][command](client, message, args, requires);
+
+      switch (result.status) {
+        case 'fail':
+          break
+        case 'update':
+          if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
+            functions.updateFile(result.file, result.data);
+            console.log(result.file + ' updated.');
+          } else {
+            console.log('Missing update file or data.');
+          }
+        case 'success':
+          return true;
+      }
+      return false;
+    });
   }
 });
 
@@ -276,18 +293,23 @@ client.addListener('message', function (from, to, content) {
 client.addListener('join', function (channel, user, content) {
   var builtin_found = false,
       plugin_found = false;
+  var message = {
+    from: user,
+    to: false,
+    content: content
+  }
   console.log(user + ' joined ' + channel);
 
-  builtin_found = builtins.some(function (command) {
-    if (checkCommand(command, 'onjoin', user, channel, content).status === 'success') {
+  builtin_found = builtins.some(function (builtin) {
+    if (checkCommand(builtin, 'onjoin', message).status === 'success') {
       return true;
     }
     return false;
   });
 
   if (!builtin_found) {
-    plugin_found = plugins.some(function (command) {
-      var result = checkCommand(command, 'onjoin', user, channel, content);
+    plugin_found = plugins.some(function (plugin) {
+      var result = checkCommand(plugin, 'onjoin', message);
 
       switch (result.status) {
         case 'fail':
