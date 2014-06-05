@@ -7,7 +7,12 @@ config.network = 'irc.freenode.net';
 config.disable = ['silly.js'];
 
 config.params = {
-  channels: ['#examplechannel']
+  channels: ['#examplechannel'],
+  userName: config.handle,
+  nick: config.handle,
+  password: 'your_password_here',
+  sasl: true,
+  realName: 'OpenSourcery IRC Bot'
 };
 
 config.github = {
