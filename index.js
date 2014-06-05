@@ -222,7 +222,7 @@ var checkCommand = function (plugin, event, message) {
     }
     if (result.status === 'fail') {
       // We didn't find a named function, so do other more anonymous ones, like
-      // regex
+      // regex.
       if (plugin.hasOwnProperty('regex')) {
         result = plugin.regex(client, message, requires);
       }
