@@ -160,7 +160,7 @@ var builtins = [
             return value !== false;
           }).join(", ");
           var helpfunctions;
-          
+
           if (args[0]) {
             command = args[0];
           }
@@ -229,41 +229,44 @@ client.addListener('message', function (from, to, content) {
   };
   console.log(from + ' said ' + content + ' to ' + to);
 
-  if (input[2]) {
-    args = input[2].trim().split([' ']);
-  }
+  if (input) {
 
-  if (input && input[1]) {
-    command = input[1];
-    builtin_found = builtins.some(function (builtin) {
-      if (checkCommand(builtin, 'onmessage', command, message, args).status === 'success') {
-        return true;
-      }
-      return false;
-    });
-
-    if (!builtin_found) {
-      plugin_found = plugins.some(function (plugin) {
-        var result = checkCommand(plugin, 'onmessage', command, message, args);
-
-        switch (result.status) {
-          case 'fail':
-            break
-          case 'update':
-            if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
-              functions.updateFile(result.file, result.data);
-              console.log(result.file + ' updated.');
-            } else {
-              console.log('Missing update file or data.');
-            }
-          case 'success':
-            return true;
+    if (input[2]) {
+      args = input[2].trim().split([' ']);
+    }
+    if (input[1]) {
+      command = input[1];
+      builtin_found = builtins.some(function (builtin) {
+        if (checkCommand(builtin, 'onmessage', command, message, args).status === 'success') {
+          return true;
         }
         return false;
       });
-    }
-  }
 
+      if (!builtin_found) {
+        plugin_found = plugins.some(function (plugin) {
+          var result = checkCommand(plugin, 'onmessage', command, message, args);
+
+          switch (result.status) {
+            case 'fail':
+              break
+            case 'update':
+              if (result.hasOwnProperty('file') && result.hasOwnProperty('data')) {
+                functions.updateFile(result.file, result.data);
+                console.log(result.file + ' updated.');
+              } else {
+                console.log('Missing update file or data.');
+              }
+            case 'success':
+              return true;
+          }
+          return false;
+        });
+      }
+    }
+    return true;
+  }
+  return false;
 });
 
 // When a user joins the channel, look through all plugins and builtins for an
