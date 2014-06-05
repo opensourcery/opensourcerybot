@@ -176,8 +176,6 @@ var builtins = [
             });
             if (!helpfunctions) {
               plugins.forEach(function (plugin) {
-                console.log(plugin.name);
-                console.log(typeof(plugin.aliases));
                 if ((plugin.name === command || (typeof(plugin.aliases) != 'undefined' && plugin.aliases.indexOf(command) > -1)) && plugin.hasOwnProperty('help')) {
                 console.log(plugin.aliases.indexOf(command) > -1);
                   helpfunctions = plugin.help;
