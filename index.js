@@ -267,7 +267,7 @@ client.addListener('message', function (from, to, content) {
 
   if (!builtin_found) {
     plugin_found = plugins.some(function (plugin) {
-      var result = plugin['onmessage'][command](client, message, args, requires);
+      var result = checkCommand(plugin, 'onmessage', message);
 
       switch (result.status) {
         case 'fail':
