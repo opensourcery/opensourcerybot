@@ -122,7 +122,7 @@ var builtins = [
       }
     ],
     run: {
-        onmessage: function (client, message) {
+      onmessage: function (client, message) {
         var result = /^!reload$/.exec(message.content);
         if (result) {
           functions.loadPlugins();
