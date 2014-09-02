@@ -1,6 +1,6 @@
-var irc = require('irc'),
-    fs = require('fs'),
-    path = require('path');
+var irc = require('irc'),   // The base irc-bot module.
+    fs = require('fs'),     // Required to navigate file systems.
+    path = require('path'); // Used for fast path creation.
 
 var config = require('./config');
 
