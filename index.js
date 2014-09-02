@@ -28,6 +28,7 @@ var functions = {
   loadPlugins: function () {
     plugins = [];
     var startups = [];
+    // Include all of the plugins.
     fs.readdirSync('./lib/plugins').forEach(function (name) {
       var filename = path.resolve('./lib/plugins/' + name);
       delete require.cache[filename];
