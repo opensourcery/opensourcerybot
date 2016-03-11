@@ -18,6 +18,7 @@ An example of a completed configuration file has been provided with `example.con
 
 * **handle** (string): The name osbot should take when it joins channels.
 * **network** (string): The server osbot will connect to.
+* **disable** (array): An array of filenames, located in lib/plugins, that OSbot should **skip** when auto-loading plugins.
 * **params** (object): Various parameters passed to `node-irc` when osbot is run, which can include:
   * **channels** (array): An array of channels osbot will join upon logging in to the server.
 * **github** (object): Optional parameters to use with the `node-github` module, which is mostly used for filing issues with OSbot.
@@ -106,3 +107,34 @@ OSbot is meant to both be useful and entertaining, and it has several ways of co
 | `Die Hard 2: Die Harder` | Dieharderer | When OSbot sees something in chat that could make a good and/or bad movie sequel title, they will say it. |
 | `Snow? Did somebody say snow?` | Trigger | Specific triggers may be set up for OSbot that look for certain words and spit out canned responses. This function is still being improved and worked on. |
 | `so irc`, `such wow` | Wow | Doge! Triggered by the word `wow` appearing in a chat message, OSbot will randomly state a saved `!wow` message. |
+
+## Plugins <a name="plugins"></a>
+
+OSbot is equipped with a somewhat nifty plugin structure that allows for customization via a fairly simple API. Plugins generally feature new commands for OSbot, via Regex to watch for in the chat, or new functions to be featured internally in other plugins.
+
+All plugins located in `lib/plugins` are auto-loaded by OSbot when it is started up, unless they have been listed by filename in `config.disable`.
+
+### Creating a New Plugin
+
+To create a new plugin, create a new Javascript file in `lib/plugins`. We suggest looking to `diceroll.js` for an example of a plugin that features both `.run` functionality and `.functions` functionality, but all that is required for your plugin to exist is the file to be in the folder.
+
+### Parts of a plugin
+
+A plugin is an exportable NodeJS object, and as such as a number of different properties and methods that are automatically used by OSbot. Properties should be defined by stating `exports.[property name] = [value]`.
+
+Here is a lost of optional properties and how to get the best out of them, listed in order of "most likely to be used by you":
+
+* `name` (string): A plaintext name of the plugin, generally matches the name of the file.
+* `weight` (integer): The order this plugin should be loaded and its `startup` function ran (if it has one). Higher numbers means later in the load order.
+* `run` (object): An object of functions to be ran when various events occur on the channel OSbot is in. All functions in `run` will take the following parameters: `client`, a basic irc module object; `message`, the event information sent from the irc module, and `requires`, which contains the modules and functions laid out in the plugin's `requires` property, laid out below. Currently, the two functions that can be defined in `run` are:
+  * `onmessage` (function): Function to run on any message sent to the IRC channel OSbot runs in. Normally used to do a series of Regex tests for specific commands.
+  * `onjoin` (function): Function to run when a user joins the IRC channel OSbot runs in.
+* `help` (array): An array of objects that list commands and functions of a specific plugin, accessed via the built-in plugin `!help [plugin name]`. The objects have two properties:
+  * `usage`: Shows usage of a command, such as `!tell [user] [message]`, showing the basic skeleton of a command.
+  * `description`: Explains in prose how the command in question works.
+* `requires` (array): An array of objects describing files, modules, or plugins that need to be passed to the various `.run` functions of this plugin. Requires consist of:
+  * `name` (string): A descriptive name for the module in question, to be used by your plugin later.
+  * `type` (string): If your required file is a JSON object, stored on your server, define it here as either "array" or "object".
+  * `file` (string): **Either** the path to the file that contains a JSON object, or the name of an NPM module that you have installed to your OSbot directory.
+* `startup` (function): Function to be run when OSbot first is started up. These will be run in order of weight.
+* `functions` (object): Object of functions that will be included if this plugin is listed as a required plugin in another plugin. For example, the tell.js plugin exports the `tell()` function so that other plugins that wish to save a tell for a user may do so.
