@@ -122,7 +122,7 @@ To create a new plugin, create a new Javascript file in `lib/plugins`. We sugges
 
 A plugin is an exportable NodeJS object, and as such as a number of different properties and methods that are automatically used by OSbot. Properties should be defined by stating `exports.[property name] = [value]`.
 
-Here is a lost of optional properties and how to get the best out of them, listed in order of "most likely to be used by you":
+Here is a list of optional properties and how to get the best out of them, listed in order of "most likely to be used by you":
 
 * `name` (string): A plaintext name of the plugin, generally matches the name of the file.
 * `weight` (integer): The order this plugin should be loaded and its `startup` function ran (if it has one). Higher numbers means later in the load order.
